@@ -35,4 +35,5 @@ public class EmailService {
                 + "Por favor, guarda esta información para poder acceder a nuestra tienda.";
         enviarCorreo(destino, asunto, mensaje);
     }
+
 }

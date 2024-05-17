@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.sql.Date;
 
 
-
 @Entity
 @Table(name = "compras")
 public class Compras {
@@ -14,12 +13,23 @@ public class Compras {
     private int id_compra;
 
     @ManyToOne
-    @JoinColumn(name = "id_cliente")
+    @JoinColumn(name = "cliente_id")
     private Usuarios id_cliente;
+    @ManyToOne
+    @JoinColumn(name = "productos_id_producto")
+    private Productos productos_id_producto;
 
     private Date fecha;
 
     private BigDecimal total;
+
+    public Productos getProductos_id_producto() {
+        return productos_id_producto;
+    }
+
+    public void setProductos_id_producto(Productos productos_id_producto) {
+        this.productos_id_producto = productos_id_producto;
+    }
 
     public int getId_compra() {
         return id_compra;
@@ -52,5 +62,4 @@ public class Compras {
     public void setTotal(BigDecimal total) {
         this.total = total;
     }
-
 }
