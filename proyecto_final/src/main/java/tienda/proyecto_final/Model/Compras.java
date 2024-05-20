@@ -22,6 +22,8 @@ public class Compras {
     private Date fecha;
 
     private BigDecimal total;
+    private int cantidad;
+
 
     public Productos getProductos_id_producto() {
         return productos_id_producto;
@@ -61,5 +63,13 @@ public class Compras {
 
     public void setTotal(BigDecimal total) {
         this.total = total;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
     }
 }

@@ -4,9 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import tienda.proyecto_final.Model.Productos;
 import tienda.proyecto_final.Model.Usuarios;
 
 import javax.mail.internet.MimeMessage;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.time.LocalDate;
 
 @Service
 public class EmailService {
@@ -36,4 +40,15 @@ public class EmailService {
         enviarCorreo(destino, asunto, mensaje);
     }
 
+    public void enviarCorreoCompra(Usuarios cliente, Productos producto, int cantidad, BigDecimal total) {
+        String destino = cliente.getEmail();
+        String asunto = "Detalles de tu compra";
+        String mensaje = "Gracias por tu compra \n" +
+                "Hola " + cliente.getNombre() + " " +
+                "Has comprado: " + cantidad + " x " + producto.getNombre() + " " +
+                "Total: $ " + total + " " +
+                "Fecha: " + Date.valueOf(LocalDate.now()) + " \n " +
+                "Gracias por comprar con nosotros.";
+        enviarCorreo(destino, asunto, mensaje);
+    }
 }
