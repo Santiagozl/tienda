@@ -11,13 +11,13 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 @RestController
-@RequestMapping("/productos")
+@RequestMapping("/api/productos")
 public class ProductosController {
 
     @Autowired
     private ProductoService productoService;
 
-    @PostMapping("/nuevo")
+    @PostMapping()
     public ResponseEntity<Productos> insertarProducto(
             @RequestParam String nombre,
             @RequestParam String tipoProducto,

@@ -13,7 +13,7 @@ import tienda.proyecto_final.Service.EmailService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/clientes")
+@RequestMapping("/api/usuarios")
 public class UsuariosAdminController {
 
     @Autowired

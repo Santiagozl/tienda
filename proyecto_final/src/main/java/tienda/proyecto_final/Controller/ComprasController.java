@@ -10,12 +10,12 @@ import tienda.proyecto_final.Service.CompraService;
 import java.math.BigDecimal;
 
 @RestController
-@RequestMapping("/compras")
+@RequestMapping("/api/compras")
 public class ComprasController {
     @Autowired
     private CompraService comprasService;
 
-    @PostMapping("/realizar")
+    @PostMapping()
     public Compras realizarCompra(@RequestBody CompraRequest compraRequest) {
         return comprasService.realizarCompra(compraRequest.getIdCliente(), compraRequest.getIdProducto(), compraRequest.getTotal(), compraRequest.getCantidad());
     }
