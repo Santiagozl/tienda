@@ -45,26 +45,28 @@ public class ProductoService {
     public Productos obtenerProducto(Integer id) {
         return productoRepository.findById(id).orElse(null);
     }
+    // Método para insertar un nuevo producto
+    public Productos insertarProducto(Productos producto) throws IOException {
+        // Aquí puedes realizar cualquier validación adicional antes de guardar el producto en la base de datos
+        return productoRepository.save(producto);
+    }
 
-    public Productos actualizarProducto(Integer id, String nombre, String tipoProducto, Integer cantidadDisponible, BigDecimal precio, MultipartFile imagen) throws IOException {
-        Productos producto = productoRepository.findById(id).orElse(null);
-        if (producto != null) {
-            producto.setNombre(nombre);
-            producto.setTipo_producto(tipoProducto);
-            producto.setCantidad_disponible(cantidadDisponible);
-            producto.setPrecio(precio);
+    // Método para actualizar un producto existente
+    public Productos actualizarProducto(Integer id, Productos producto) throws IOException {
+        Productos productoExistente = productoRepository.findById(id).orElse(null);
+        if (productoExistente != null) {
+            // Actualiza las propiedades del producto existente con las propiedades del producto recibido
+            productoExistente.setNombre(producto.getNombre());
+            productoExistente.setTipo_producto(producto.getTipo_producto());
+            productoExistente.setCantidad_disponible(producto.getCantidad_disponible());
+            productoExistente.setPrecio(producto.getPrecio());
 
-            if (!imagen.isEmpty()) {
-                String fileName = imagen.getOriginalFilename();
-                String relativePath = UPLOAD_DIR + fileName;
-                Path path = Paths.get(relativePath);
-                Files.createDirectories(path.getParent());
-                Files.write(path, imagen.getBytes());
-                producto.setImg(relativePath);
-            }
-            return productoRepository.save(producto);
+            // Guarda el producto actualizado en la base de datos
+            return productoRepository.save(productoExistente);
+        } else {
+            // Si no se encuentra el producto con el ID especificado, devuelve null o lanza una excepción según sea necesario
+            return null;
         }
-        return null;
     }
 
     public void eliminarProducto(Integer id) {

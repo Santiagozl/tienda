@@ -44,17 +44,11 @@ public class ProductosController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Productos> actualizarProducto(
-            @PathVariable Integer id,
-            @RequestParam String nombre,
-            @RequestParam String tipoProducto,
-            @RequestParam Integer cantidadDisponible,
-            @RequestParam BigDecimal precio,
-            @RequestParam(required = false) MultipartFile imagen) {
+    public ResponseEntity<Productos> actualizarProducto(@PathVariable Integer id, @RequestBody Productos producto) {
         try {
-            Productos producto = productoService.actualizarProducto(id, nombre, tipoProducto, cantidadDisponible, precio, imagen);
-            if (producto != null) {
-                return ResponseEntity.ok(producto);
+            Productos productoActualizado = productoService.actualizarProducto(id, producto);
+            if (productoActualizado != null) {
+                return ResponseEntity.ok(productoActualizado);
             } else {
                 return ResponseEntity.notFound().build();
             }
@@ -62,7 +56,6 @@ public class ProductosController {
             return ResponseEntity.status(500).body(null);
         }
     }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarProducto(@PathVariable Integer id) {
         productoService.eliminarProducto(id);

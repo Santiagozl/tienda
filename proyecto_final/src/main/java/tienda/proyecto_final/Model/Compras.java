@@ -3,35 +3,47 @@ package tienda.proyecto_final.Model;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
 @Table(name = "compras")
 public class Compras {
 
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id_compra;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
-    private Usuarios id_cliente;
-    @ManyToOne
-    @JoinColumn(name = "productos_id_producto")
-    private Productos productos_id_producto;
+    private Usuarios cliente;
 
     private Date fecha;
 
+    // Se añade inicialización para evitar nullPointerException
+    @OneToMany(mappedBy = "id_compra", cascade = CascadeType.ALL)
+    private List<CompraDetalle> detalles = new ArrayList<>();
+
     private BigDecimal total;
-    private int cantidad;
 
+    // Constructores, Getters y Setters
 
-    public Productos getProductos_id_producto() {
-        return productos_id_producto;
+    public Compras() {
+        this.detalles = new ArrayList<>();
     }
 
-    public void setProductos_id_producto(Productos productos_id_producto) {
-        this.productos_id_producto = productos_id_producto;
+
+    public Compras(Usuarios cliente, Date fecha, BigDecimal total) {
+        this.cliente = cliente;
+        this.fecha = fecha;
+        this.total = total;
     }
+
+    // Otros constructores si es necesario
+
+    // Getters y Setters
 
     public int getId_compra() {
         return id_compra;
@@ -41,12 +53,12 @@ public class Compras {
         this.id_compra = id_compra;
     }
 
-    public Usuarios getId_cliente() {
-        return id_cliente;
+    public Usuarios getCliente() {
+        return cliente;
     }
 
-    public void setId_cliente(Usuarios id_cliente) {
-        this.id_cliente = id_cliente;
+    public void setCliente(Usuarios cliente) {
+        this.cliente = cliente;
     }
 
     public Date getFecha() {
@@ -57,19 +69,19 @@ public class Compras {
         this.fecha = fecha;
     }
 
+    public List<CompraDetalle> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<CompraDetalle> detalles) {
+        this.detalles = detalles;
+    }
+
     public BigDecimal getTotal() {
         return total;
     }
 
     public void setTotal(BigDecimal total) {
         this.total = total;
-    }
-
-    public int getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
     }
 }
