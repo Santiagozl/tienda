@@ -28,6 +28,10 @@ public class UsuariosService {
         return cliente.isPresent();
     }
 
+    public Optional<Usuarios> obtenerPorUsuarioYContraseñaYRol(String usuario, String contraseña, String rol) {
+        return usuariosRepository.findByUsuarioAndContraseñaAndRol(usuario, contraseña, rol);
+    }
+
     public java.util.List<Usuarios> obtenerTodosClientes() {
         return usuariosRepository.findAll();
     }

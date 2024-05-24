@@ -1,6 +1,7 @@
 package tienda.proyecto_final.Controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,15 +56,17 @@ public class UsuariosAdminController {
         return new ResponseEntity<>(nuevoCliente, HttpStatus.CREATED);
     }
 
-    public class LoginResponse {
+    public static class LoginResponse {
 
         private String message;
+        private int id;
 
-        public LoginResponse(String message) {
+        public LoginResponse(String message, int id) {
             this.message = message;
+            this.id = id;
         }
 
-        // Getter y setter
+        // Getters y setters
         public String getMessage() {
             return message;
         }
@@ -71,20 +74,32 @@ public class UsuariosAdminController {
         public void setMessage(String message) {
             this.message = message;
         }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginDTO loginDTO, Usuarios usuarioId) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginDTO loginDTO) {
         String usuario = loginDTO.getUsuario();
         String contraseña = loginDTO.getContraseña();
-        int id = usuarioId.getId_cliente();
 
-        if (usuariosService.esAdministrador(usuario, contraseña)) {
-            return new ResponseEntity<>(new LoginResponse("id:" + id), HttpStatus.OK);
-        } else if (usuariosService.esCliente(usuario, contraseña)) {
-            return new ResponseEntity<>(new LoginResponse("id:" + id), HttpStatus.OK);
+        Optional<Usuarios> adminOpt = usuariosService.obtenerPorUsuarioYContraseñaYRol(usuario, contraseña, "admin");
+        Optional<Usuarios> clienteOpt = usuariosService.obtenerPorUsuarioYContraseñaYRol(usuario, contraseña, "cliente");
+
+        if (adminOpt.isPresent()) {
+            Usuarios admin = adminOpt.get();
+            return new ResponseEntity<>(new LoginResponse("Bienvenido, administrador", admin.getId_cliente()), HttpStatus.OK);
+        } else if (clienteOpt.isPresent()) {
+            Usuarios cliente = clienteOpt.get();
+            return new ResponseEntity<>(new LoginResponse("Bienvenido, cliente", cliente.getId_cliente()), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new LoginResponse("id:" + id), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new LoginResponse("Credenciales inválidas", -1), HttpStatus.UNAUTHORIZED);
         }
     }
 
