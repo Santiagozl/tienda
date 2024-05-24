@@ -9,6 +9,7 @@ import tienda.proyecto_final.Service.ProductoService;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/productos")
@@ -31,13 +32,14 @@ public class ProductosController {
             return ResponseEntity.status(500).body(null);
         }
     }
-    @GetMapping("/{id}")
-    public ResponseEntity<Productos> obtenerProducto(@PathVariable Integer id) {
-        Productos producto = productoService.obtenerProducto(id);
-        if (producto != null) {
-            return ResponseEntity.ok(producto);
+
+    @GetMapping()
+    public ResponseEntity<ResponseData<List<Productos>>> listarProductos() {
+        List<Productos> productos = productoService.listarProductos();
+        if (productos != null && !productos.isEmpty()) {
+            return ResponseEntity.ok(new ResponseData<>(true, "Productos encontrados", productos));
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(new ResponseData<>(false, "No se encontraron productos", null));
         }
     }
 
@@ -66,4 +68,49 @@ public class ProductosController {
         productoService.eliminarProducto(id);
         return ResponseEntity.noContent().build();
     }
+
+    public class ResponseData<T> {
+
+        private boolean status;
+        private String message;
+        private T data;
+
+        public ResponseData(boolean status, String message, T data) {
+            this.status = status;
+            this.message = message;
+            this.data = data;
+        }
+
+        // Constructor adicional
+        public ResponseData(boolean status, String message) {
+            this.status = status;
+            this.message = message;
+            this.data = null;
+        }
+
+        public boolean isStatus() {
+            return status;
+        }
+
+        public void setStatus(boolean status) {
+            this.status = status;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public T getData() {
+            return data;
+        }
+
+        public void setData(T data) {
+            this.data = data;
+        }
+    }
+
 }

@@ -56,6 +56,46 @@ public class UsuariosAdminController {
         return new ResponseEntity<>(nuevoCliente, HttpStatus.CREATED);
     }
 
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginDTO loginDTO) {
+        String usuario = loginDTO.getUsuario();
+        String contraseña = loginDTO.getContraseña();
+
+        Optional<Usuarios> adminOpt = usuariosService.obtenerPorUsuarioYContraseñaYRol(usuario, contraseña, "admin");
+        Optional<Usuarios> clienteOpt = usuariosService.obtenerPorUsuarioYContraseñaYRol(usuario, contraseña, "cliente");
+
+        if (adminOpt.isPresent()) {
+            Usuarios admin = adminOpt.get();
+            LoginResponse.Data data = new LoginResponse.Data(admin.getId_cliente(), "admin");
+            return new ResponseEntity<>(new LoginResponse("Bienvenido, administrador", data, true), HttpStatus.OK);
+        } else if (clienteOpt.isPresent()) {
+            Usuarios cliente = clienteOpt.get();
+            LoginResponse.Data data = new LoginResponse.Data(cliente.getId_cliente(), "cliente");
+            return new ResponseEntity<>(new LoginResponse("Bienvenido, cliente", data, true), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new LoginResponse("Credenciales invalidas", new LoginResponse.Data(-1, "none"), false), HttpStatus.OK);
+        }
+    }
+
+    // Endpoint para actualizar un cliente existente
+    @PutMapping("/{id}")
+    public ResponseEntity<Usuarios> actualizarClciente(@PathVariable("id") Integer id, @RequestBody ActualizarClienteDTO clienteDTO) {
+        Usuarios clienteActualizado = usuariosService.actualizarCliente(id, clienteDTO);
+        if (clienteActualizado != null) {
+            return new ResponseEntity<>(clienteActualizado, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Endpoint para eliminar un cliente
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarCliente(@PathVariable("id") Integer id) {
+        usuariosService.eliminarCliente(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     public static class LoginResponse {
 
         private Data data;
@@ -120,44 +160,5 @@ public class UsuariosAdminController {
                 this.rol = rol;
             }
         }
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginDTO loginDTO) {
-        String usuario = loginDTO.getUsuario();
-        String contraseña = loginDTO.getContraseña();
-
-        Optional<Usuarios> adminOpt = usuariosService.obtenerPorUsuarioYContraseñaYRol(usuario, contraseña, "admin");
-        Optional<Usuarios> clienteOpt = usuariosService.obtenerPorUsuarioYContraseñaYRol(usuario, contraseña, "cliente");
-
-        if (adminOpt.isPresent()) {
-            Usuarios admin = adminOpt.get();
-            LoginResponse.Data data = new LoginResponse.Data(admin.getId_cliente(), "admin");
-            return new ResponseEntity<>(new LoginResponse("Bienvenido, administrador", data, true), HttpStatus.OK);
-        } else if (clienteOpt.isPresent()) {
-            Usuarios cliente = clienteOpt.get();
-            LoginResponse.Data data = new LoginResponse.Data(cliente.getId_cliente(), "cliente");
-            return new ResponseEntity<>(new LoginResponse("Bienvenido, cliente", data, true), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(new LoginResponse("Credenciales invalidas", new LoginResponse.Data(-1, "none"), false), HttpStatus.OK);
-        }
-    }
-
-    // Endpoint para actualizar un cliente existente
-    @PutMapping("/{id}")
-    public ResponseEntity<Usuarios> actualizarClciente(@PathVariable("id") Integer id, @RequestBody ActualizarClienteDTO clienteDTO) {
-        Usuarios clienteActualizado = usuariosService.actualizarCliente(id, clienteDTO);
-        if (clienteActualizado != null) {
-            return new ResponseEntity<>(clienteActualizado, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    // Endpoint para eliminar un cliente
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarCliente(@PathVariable("id") Integer id) {
-        usuariosService.eliminarCliente(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
