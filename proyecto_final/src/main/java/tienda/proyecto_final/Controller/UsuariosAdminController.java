@@ -58,12 +58,14 @@ public class UsuariosAdminController {
 
     public static class LoginResponse {
 
+        private Data data;
         private String message;
-        private int id;
+        private boolean status;
 
-        public LoginResponse(String message, int id) {
+        public LoginResponse(String message, Data data, boolean status) {
             this.message = message;
-            this.id = id;
+            this.data = data;
+            this.status = status;
         }
 
         // Getters y setters
@@ -75,12 +77,48 @@ public class UsuariosAdminController {
             this.message = message;
         }
 
-        public int getId() {
-            return id;
+        public Data getData() {
+            return data;
         }
 
-        public void setId(int id) {
-            this.id = id;
+        public void setData(Data data) {
+            this.data = data;
+        }
+
+        public boolean getStatus() {
+            return status;
+        }
+
+        public void setStatus(boolean status) {
+            this.status = status;
+        }
+
+        public static class Data {
+
+            private int id;
+            private String rol;
+
+            public Data(int id, String rol) {
+                this.id = id;
+                this.rol = rol;
+            }
+
+            // Getters y setters
+            public int getId() {
+                return id;
+            }
+
+            public void setId(int id) {
+                this.id = id;
+            }
+
+            public String getRol() {
+                return rol;
+            }
+
+            public void setRol(String rol) {
+                this.rol = rol;
+            }
         }
     }
 
@@ -94,12 +132,14 @@ public class UsuariosAdminController {
 
         if (adminOpt.isPresent()) {
             Usuarios admin = adminOpt.get();
-            return new ResponseEntity<>(new LoginResponse("Bienvenido, administrador", admin.getId_cliente()), HttpStatus.OK);
+            LoginResponse.Data data = new LoginResponse.Data(admin.getId_cliente(), "admin");
+            return new ResponseEntity<>(new LoginResponse("Bienvenido, administrador", data, true), HttpStatus.OK);
         } else if (clienteOpt.isPresent()) {
             Usuarios cliente = clienteOpt.get();
-            return new ResponseEntity<>(new LoginResponse("Bienvenido, cliente", cliente.getId_cliente()), HttpStatus.OK);
+            LoginResponse.Data data = new LoginResponse.Data(cliente.getId_cliente(), "cliente");
+            return new ResponseEntity<>(new LoginResponse("Bienvenido, cliente", data, true), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new LoginResponse("Credenciales inválidas", -1), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new LoginResponse("Credenciales invalidas", new LoginResponse.Data(-1, "none"), false), HttpStatus.OK);
         }
     }
 

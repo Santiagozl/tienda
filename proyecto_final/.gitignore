@@ -33,3 +33,4 @@ build/
 .vscode/
 
 email.properties
+application.properties
