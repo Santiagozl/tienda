@@ -1,16 +1,24 @@
 package tienda.proyecto_final.Controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import tienda.proyecto_final.Model.ActualizarClienteDTO;
+import tienda.proyecto_final.Model.LoginDTO;
 import tienda.proyecto_final.Model.Usuarios;
-import tienda.proyecto_final.Service.UsuariosService;
 import tienda.proyecto_final.Service.EmailService;
-
-import java.util.List;
+import tienda.proyecto_final.Service.UsuariosService;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -46,19 +54,37 @@ public class UsuariosAdminController {
         emailService.enviarCorreoNuevoCliente(nuevoCliente);
         return new ResponseEntity<>(nuevoCliente, HttpStatus.CREATED);
     }
+
+    public class LoginResponse {
+
+        private String message;
+
+        public LoginResponse(String message) {
+            this.message = message;
+        }
+
+        // Getter y setter
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
+
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestParam String usuario, @RequestParam String contraseña) {
-        // Verificar si el usuario es administrador
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginDTO loginDTO, Usuarios usuarioId) {
+        String usuario = loginDTO.getUsuario();
+        String contraseña = loginDTO.getContraseña();
+        int id = usuarioId.getId_cliente();
+
         if (usuariosService.esAdministrador(usuario, contraseña)) {
-            return new ResponseEntity<>("Bienvenido, administrador", HttpStatus.OK);
-        }
-        // Verificar si el usuario es cliente
-        else if (usuariosService.esCliente(usuario, contraseña)) {
-            return new ResponseEntity<>("Bienvenido, cliente", HttpStatus.OK);
-        }
-        // Si las credenciales son inválidas
-        else {
-            return new ResponseEntity<>("Credenciales inválidas", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new LoginResponse("id:" + id), HttpStatus.OK);
+        } else if (usuariosService.esCliente(usuario, contraseña)) {
+            return new ResponseEntity<>(new LoginResponse("id:" + id), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new LoginResponse("id:" + id), HttpStatus.UNAUTHORIZED);
         }
     }
 
